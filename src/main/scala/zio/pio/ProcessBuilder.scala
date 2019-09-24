@@ -15,12 +15,10 @@ class ProcessBuilder private[pio] (private[pio] val jProcessBuilder: JProcessBui
       .refineToOrDie[Exception]
 
   def directory(): ZIO[Any, Exception, java.io.File] =
-    IO.effect(
-        jProcessBuilder.directory()
-      )
+    IO.effect(jProcessBuilder.directory())
       .refineToOrDie[Exception]
 
-  def start(): ZIO[Any, IOException, Process] =
+  def start(): ZIO[Any, IOException, Process] = 
     IO.effect(jProcessBuilder.start())
       .flatMap(Process.apply)
       .refineToOrDie[IOException]
@@ -28,10 +26,10 @@ class ProcessBuilder private[pio] (private[pio] val jProcessBuilder: JProcessBui
 
 object ProcessBuilder {
 
-  def apply(arg: String, args: String*) =
+  def apply(arg: String, args: String*): ZIO[Any, Exception, ProcessBuilder] =
     IO.effect {
         val processArgs: List[String] = arg +: args.toList
-        new JProcessBuilder(processArgs.asJava)
+        new ProcessBuilder(new JProcessBuilder(processArgs.asJava))
       }
       .refineToOrDie[Exception]
 

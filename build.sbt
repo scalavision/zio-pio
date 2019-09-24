@@ -21,20 +21,20 @@ inThisBuild(
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
 
+val zioVersion = "1.0.0-RC12-1"
+
 lazy val zioNio = project
   .in(file("."))
   .settings(
     name := "zio-pio",
     libraryDependencies ++= Seq(
-      "dev.zio"        %% "zio"              % "1.0.0-RC12-1",
-      "dev.zio"        %% "zio-streams"      % "1.0.0-RC12-1",
+      "dev.zio"        %% "zio"              % zioVersion,
+      "dev.zio"        %% "zio-streams"      % zioVersion,
       "dev.zio"        %% "zio-interop-java" % "1.1.0.0-RC3",
-      "org.scalacheck" %% "scalacheck"       % "1.14.0" % Test,
-      "org.scalaz"     %% "testz-core"       % "0.0.5" % Test,
-      "org.scalaz"     %% "testz-stdlib"     % "0.0.5" % Test,
-      "org.scalaz"     %% "testz-runner"     % "0.0.5" % Test,
-      "org.scalaz"     %% "testz-specs2"     % "0.0.5" % Test
-    )
+      "dev.zio" %% "zio-test"     % zioVersion % "test",
+      "dev.zio" %% "zio-test-sbt" % zioVersion % "test"
+    ),
+    testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
 
 lazy val docs = project

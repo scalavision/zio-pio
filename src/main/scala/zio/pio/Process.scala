@@ -3,8 +3,11 @@ package zio.pio
 import java.lang.{ Process => JProcess }
 import zio._
 import zio.duration._
+import zio.stream._
 import java.util.concurrent.TimeUnit
 import java.lang.InterruptedException
+
+sealed trait ProcessStreamHandler
 
 class Process private[pio] (private[pio] val jProcess: JProcess) {
 
@@ -49,10 +52,21 @@ class Process private[pio] (private[pio] val jProcess: JProcess) {
       )
       .refineToOrDie[Exception]
 
+  def readFromStdOut: ZStream[Any, Exception, Array[Byte]] = ???
+    //Stream.fromInputStream(jProcess.getInputStream())
+
+  def readFromStdErr = 
+    Stream.fromInputStream(jProcess.getErrorStream())
+
 }
 
 object Process {
 
-  def apply(jP: JProcess): ZIO[Any, Nothing, Process] =
-    ZIO.effectTotal(new Process(jP))
+  def apply(
+    jProcess: JProcess
+  ): ZIO[Any, Nothing, Process] = 
+    ZIO.effectTotal(new Process(
+      jProcess
+    ))
+    
 }
